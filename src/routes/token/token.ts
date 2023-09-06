@@ -4,9 +4,9 @@ import { sendError } from '@/errors';
 import { Joi, refreshToken } from '@/validation';
 import NodeCache from 'node-cache';
 
-const cache = new NodeCache({ stdTTL: 60 * 60 * 24 });
+const invalidTokenCache = new NodeCache({ stdTTL: 60 });
 
-const tokenCache = new NodeCache({ stdTTL: 850 });
+const tokenCache = new NodeCache({ stdTTL: 100, checkperiod: 120 });
 
 export const tokenSchema = Joi.object({
   refreshToken,
@@ -17,19 +17,21 @@ export const tokenHandler: RequestHandler<{},
   { refreshToken: string }> = async (req, res) => {
   const { refreshToken } = req.body;
 
-  if (cache.get(refreshToken) === true) {
+  if (invalidTokenCache.get(refreshToken) === true) {
     return sendError(res, 'invalid-refresh-token');
   }
 
   const user = await pgClient.getUserByRefreshToken(refreshToken);
 
   if (!user) {
-    cache.set(refreshToken, true);
+    invalidTokenCache.set(refreshToken, true);
     return sendError(res, 'invalid-refresh-token');
   }
 
-  if (tokenCache.get(user.id)) {
-    return res.send(tokenCache.get(user.id));
+  const existingToken = tokenCache.get(user.id);
+
+  if (existingToken) {
+    return res.send(existingToken as any);
   }
 
   // 1 in 10 request will delete expired refresh tokens
