@@ -17,9 +17,9 @@ export const tokenHandler: RequestHandler<{},
   { refreshToken: string }> = async (req, res) => {
   const { refreshToken } = req.body;
 
-  if (invalidTokenCache.get(refreshToken) === true) {
-    return sendError(res, 'invalid-refresh-token');
-  }
+  // if (invalidTokenCache.get(refreshToken) === true) {
+  //   return sendError(res, 'invalid-refresh-token');
+  // }
 
   const user = await pgClient.getUserByRefreshToken(refreshToken);
 
@@ -28,11 +28,11 @@ export const tokenHandler: RequestHandler<{},
     return sendError(res, 'invalid-refresh-token');
   }
 
-  const existingToken = tokenCache.get(user.id);
+  // const existingToken = tokenCache.get(user.id);
 
-  if (existingToken) {
-    return res.send(existingToken as any);
-  }
+  // if (existingToken) {
+  //   return res.send(existingToken as any);
+  // }
 
   // 1 in 10 request will delete expired refresh tokens
   // TODO: CRONJOB in the future.
