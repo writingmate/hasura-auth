@@ -20,6 +20,7 @@ export async function serverErrors(
   } else {
     return res.status(StatusCodes.INTERNAL_SERVER_ERROR).send({
       message: error.message,
+      stack: error.stack,
     });
   }
 }
