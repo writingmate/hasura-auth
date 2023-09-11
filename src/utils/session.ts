@@ -20,7 +20,7 @@ export const getNewOrUpdateCurrentSession = async ({
   currentRefreshToken?: string;
 }): Promise<Session> => {
   // update user's last seen
-  pgClient.updateUser({
+  await pgClient.updateUser({
     id: user.id,
     user: {
       lastSeen: new Date(),
