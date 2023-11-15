@@ -6,7 +6,7 @@ import NodeCache from 'node-cache';
 
 const invalidTokenCache = new NodeCache({ stdTTL: 60 });
 
-const tokenCache = new NodeCache({ stdTTL: 100, checkperiod: 120 });
+// const tokenCache = new NodeCache({ stdTTL: 100, checkperiod: 120 });
 
 export const tokenSchema = Joi.object({
   refreshToken,
@@ -39,6 +39,7 @@ export const tokenHandler: RequestHandler<{},
   if (Math.random() < 0.001) {
     // no await
     await pgClient.deleteExpiredRefreshTokens();
+    await pgClient.deleteExcessiveRefreshTokens();
   }
 
   const session = await getNewOrUpdateCurrentSession({
@@ -46,7 +47,7 @@ export const tokenHandler: RequestHandler<{},
     currentRefreshToken: refreshToken,
   });
 
-  tokenCache.set(user.id, session);
+  // tokenCache.set(user.id, session);
 
   return res.send(session);
 };

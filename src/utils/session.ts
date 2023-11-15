@@ -27,6 +27,7 @@ export const getNewOrUpdateCurrentSession = async ({
     },
   });
   const sessionUser = await getUser({ userId: user.id });
+
   const accessToken = await createHasuraAccessToken(user);
   const refreshToken =
     (currentRefreshToken &&
