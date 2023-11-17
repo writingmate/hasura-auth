@@ -92,7 +92,7 @@ export const pgClient = {
         SELECT refresh_token FROM (
           SELECT refresh_token, user_id, expires_at, row_number() OVER (PARTITION BY user_id ORDER BY expires_at DESC) AS row_number FROM "auth"."refresh_tokens"
         ) AS refresh_tokens
-        WHERE row_number <= 10
+        WHERE row_number <= 100
       );`
     );
   },
