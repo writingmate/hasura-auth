@@ -85,10 +85,10 @@ export const pgClient = {
     );
   },
 
-  deleteExcessiveRefreshTokens: async () => {
+  expireExcessiveRefreshTokens: async () => {
     await pgClient.query(
       // Keep only 5 most recent refresh tokens for each user
-      `DELETE FROM "auth"."refresh_tokens" WHERE refresh_token not in (
+      `UPDATE "auth"."refresh_tokens" set expires_at = NOW() WHERE refresh_token not in (
         SELECT refresh_token FROM (
           SELECT refresh_token, user_id, expires_at, row_number() OVER (PARTITION BY user_id ORDER BY expires_at DESC) AS row_number FROM "auth"."refresh_tokens"
         ) AS refresh_tokens

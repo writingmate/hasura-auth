@@ -39,7 +39,7 @@ export const tokenHandler: RequestHandler<{},
   if (Math.random() < 0.001) {
     // no await
     await pgClient.deleteExpiredRefreshTokens();
-    await pgClient.deleteExcessiveRefreshTokens();
+    await pgClient.expireExcessiveRefreshTokens();
   }
 
   const session = await getNewOrUpdateCurrentSession({
