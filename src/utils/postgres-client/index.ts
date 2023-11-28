@@ -51,6 +51,9 @@ export const pgClient = {
       `SELECT options FROM "auth"."provider_requests" WHERE id = $1;`,
       [id]
     );
+    if (rows.length === 0) {
+      return null;
+    }
     return rows[0];
   },
 
